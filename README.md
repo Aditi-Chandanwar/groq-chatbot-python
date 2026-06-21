@@ -49,3 +49,116 @@ api
 prompt-engineering
 python-dotenv
 conversational-ai
+
+
+here's the code 
+
+
+from groq import Groq
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+client = Groq(
+    api_key=os.getenv("GROQ_API_KEY")
+)
+
+
+def add_user_message(messages, text):
+    user_message = {
+        "role": "user",
+        "content": text
+    }
+    messages.append(user_message)
+
+
+def add_assistant_message(messages, text):
+    assistant_message = {
+        "role": "assistant",
+        "content": text
+    }
+    messages.append(assistant_message)
+
+
+def chat(messages):
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        max_tokens=1000,
+        messages=messages
+    )
+
+    return response.choices[0].message.content
+
+
+# Conversation history
+messages = []
+
+add_user_message(messages, "What is quantum computing?")
+reply = chat(messages)
+print(reply)
+
+add_assistant_message(messages, reply)
+
+add_user_message(messages, "Write another sentence")
+reply = chat(messages)
+print(reply)
+
+
+
+# make a starting list of messages
+
+messages = []
+
+
+# add initial user question of "define quantum computing in one sentence"
+
+add_user_message(messages,"define quantum computing in one sentence")
+
+messages
+
+#pass the list of messages into "chat" to get an answer
+
+answer = chat(messages)
+
+answer
+
+#take answer and add it as an assistant msg into our list
+
+add_assistant_message(messages,answer)
+
+messages
+
+add_user_message(messages,"Write another sentence")
+
+#call chat again with the list of messages to get a final answer
+
+answer= chat(messages)
+answer
+
+# make an initial list of messages
+messages = []
+
+# use a 'while True' loop to run the chatbot forever
+while True:
+
+    # get user input
+    user_input = input("> ")
+
+    # optional exit
+    if user_input.lower() in ["quit", "exit"]:
+        break
+
+    # add user input to the list of messages
+    add_user_message(messages, user_input)
+
+    # call Groq
+    answer = chat(messages)
+
+    # add generated text to the list of messages
+    add_assistant_message(messages, answer)
+
+    # print the generated text
+    print("___")
+    print(answer)
+    print("___")
